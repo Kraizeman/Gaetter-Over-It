@@ -9,6 +9,8 @@ public class MouseLook : MonoBehaviour
     private Vector2 mouseInput;
     private Vector3 lookRotation;
 
+    [SerializeField] private Transform viewmodel;
+
     private void Awake()
     {
         Cursor.lockState = CursorLockMode.Locked;
