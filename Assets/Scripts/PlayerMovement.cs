@@ -49,8 +49,11 @@ public class PlayerMovement : MonoBehaviour
         HandleShooting();
         HandleColorChange();
 
-        if(transform.position.y < -10)
-        transform.position = Vector3.up;
+        if (transform.position.y < -10)
+        {
+            transform.position = Vector3.up;
+            rb.velocity = Vector3.zero;
+        }
     }
     private void FixedUpdate()
     {
@@ -76,7 +79,6 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Fire2"))
         {
             charge = 0;
-
         }
 
         if (isCharging)
