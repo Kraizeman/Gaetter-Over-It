@@ -134,7 +134,7 @@ public class PlayerMovement : MonoBehaviour
 
         cam.fieldOfView =
         Mathf.MoveTowards(cam.fieldOfView,
-        Mathf.LerpUnclamped(baseFOV, speedFOV, Easing.Smooth7.Step(dotProduct)),
+        Mathf.LerpUnclamped(baseFOV, speedFOV, Easing.Smooth7.Step(Mathf.Max(dotProduct, 0))),
         Time.deltaTime * 15);
     }
 
