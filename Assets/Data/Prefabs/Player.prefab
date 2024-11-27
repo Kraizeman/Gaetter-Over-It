@@ -333,6 +333,7 @@ GameObject:
   - component: {fileID: 3490240440681650375}
   - component: {fileID: 1800632853391866289}
   - component: {fileID: 8316278762134727602}
+  - component: {fileID: 2713170495839155504}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -376,6 +377,43 @@ MonoBehaviour:
   recoil: 1275
   baseFOV: 90
   speedFOV: 150
+  airDrag: 0.375
+  groundedDrag: 15
+  shotgunSound:
+    Guid:
+      Data1: -870760605
+      Data2: 1190584638
+      Data3: -1945960517
+      Data4: 1691775117
+    Path: event:/Shotgun
+  landSound:
+    Guid:
+      Data1: 15185374
+      Data2: 1104355478
+      Data3: -705374785
+      Data4: -1653823587
+    Path: event:/Land
+  landTooHardSound:
+    Guid:
+      Data1: -1115088722
+      Data2: 1204054338
+      Data3: -2007519596
+      Data4: -1007749102
+    Path: event:/Hit ground too hard
+  reloadSound:
+    Guid:
+      Data1: -504227199
+      Data2: 1320779855
+      Data3: 2032762777
+      Data4: 610531417
+    Path: event:/Reload
+  bulletHit:
+    Guid:
+      Data1: -1107821807
+      Data2: 1132794825
+      Data3: 1581313181
+      Data4: -329617367
+    Path: event:/Bullet Hit
   groundMask:
     serializedVersion: 2
     m_Bits: 8
@@ -429,6 +467,37 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2713170495839155504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3752293635768679807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -870760605
+      Data2: 1190584638
+      Data3: -1945960517
+      Data4: 1691775117
+    Path: event:/Shotgun
+  Event: 
+  EventPlayTrigger: 0
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &4746247588543387697
 GameObject:
   m_ObjectHideFlags: 0
