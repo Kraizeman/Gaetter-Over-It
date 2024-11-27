@@ -1,5 +1,7 @@
 using UnityEngine;
 using FMODUnity;
+using FMODUnityResonance;
+using FMOD.Studio;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -28,12 +30,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float airDrag;
     [SerializeField] private float groundedDrag;
 
+    [SerializeField]
+    private float maxWindSpeed = 25;
+
     [Header("Event References")]
-    [SerializeField] private EventReference shotgunSound;
-    [SerializeField] private EventReference landSound;
-    [SerializeField] private EventReference landTooHardSound;
-    [SerializeField] private EventReference reloadSound;
-    [SerializeField] private EventReference bulletHit;
+    [SerializeField] private StudioEventEmitter shotgunSound;
+    [SerializeField] private StudioEventEmitter landSound;
+    [SerializeField] private StudioEventEmitter reloadSound;
 
     private StudioEventEmitter ambientEmitter;
 
@@ -43,6 +46,9 @@ public class PlayerMovement : MonoBehaviour
     private StudioEventEmitter eventEmitter;
 
     private bool isCharging;
+
+    [SerializeField]
+    private StudioEventEmitter windEmitter;
 
     private void Awake()
     {
@@ -56,7 +62,10 @@ public class PlayerMovement : MonoBehaviour
         cam = Camera.main;
 
         ambientEmitter = GameObject.Find("Ambience").GetComponent<StudioEventEmitter>();
+
+        windEmitter.Play();
     }
+
     private void Update()
     {
         HandleShooting();
@@ -72,6 +81,9 @@ public class PlayerMovement : MonoBehaviour
     {
         HandleGroundCheck();
         HandleFOVDistortion();
+
+        HandleWindSpeed();
+
     }
 
     private void HandleShooting()
@@ -83,6 +95,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetButtonDown("Fire1"))
         {
+            shotgunSound.Play();
             isCharging = true;
         }
         if (Input.GetButtonUp("Fire1") || Input.GetButtonDown("Fire2"))
@@ -116,8 +129,7 @@ public class PlayerMovement : MonoBehaviour
             // Debug.Log($"Charge and recoil: {charge * recoil}");
             charge = 0;
 
-            eventEmitter.EventReference = shotgunSound;
-            eventEmitter.Play();
+            shotgunSound.Stop();
         }
     }
 
@@ -142,24 +154,28 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.drag = groundedDrag;
 
+            //  RELOAD
             if (shootTime == 0)
+            {
+                if (shotCount != 2)
+                {
+                    if(isCharging)
+                        return;
+                    reloadSound.Play();
+                }
                 shotCount = 2;
+            }
         }
+
         else
         {
             rb.drag = airDrag;
         }
+
+        //  GROUNDED BUT ONLY RUNS FIRST FRAME
         if (!previousGround && grounded)
         {
-            if (rb.velocity.magnitude < 20)
-            {
-                eventEmitter.EventReference = landSound;
-            }
-            else
-            {
-                eventEmitter.EventReference = landTooHardSound;
-            }
-            eventEmitter.Play();
+            landSound.Play();
         }
     }
 
@@ -185,5 +201,10 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("Hestsaus");
             ambientEmitter.Stop();
         }
+    }
+
+    private void HandleWindSpeed()
+    {
+        windEmitter.SetParameter("Speed", rb.velocity.magnitude / maxWindSpeed);
     }
 }
