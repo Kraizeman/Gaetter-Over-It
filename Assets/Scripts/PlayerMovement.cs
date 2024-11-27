@@ -132,6 +132,14 @@ public class PlayerMovement : MonoBehaviour
             // Debug.Log($"Charge and recoil: {charge * recoil}");
             charge = 0;
 
+            if (shotCount == 1)
+            {
+                RuntimeManager.StudioSystem.setParameterByName("Chambers", 0);
+            }
+            else if(shotCount == 0)
+            {
+                RuntimeManager.StudioSystem.setParameterByName("Chambers", 1);
+            }
             shotgunSound.Stop();
         }
     }
@@ -162,7 +170,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (shotCount != 2)
                 {
-                    if(isCharging)
+                    if (isCharging)
                         return;
                     reloadSound.Play();
                 }
