@@ -30,6 +30,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float airDrag;
     [SerializeField] private float groundedDrag;
 
+    private Animator canvasAnimator;
+
     [SerializeField]
     private float maxWindSpeed = 25;
 
@@ -62,6 +64,7 @@ public class PlayerMovement : MonoBehaviour
         cam = Camera.main;
 
         ambientEmitter = GameObject.Find("Ambience").GetComponent<StudioEventEmitter>();
+        canvasAnimator = GameObject.Find("Canvas").GetComponent<Animator>();
 
         windEmitter.Play();
     }
@@ -198,8 +201,10 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.CompareTag("WinTrigger"))
         {
-            Debug.Log("Hestsaus");
             ambientEmitter.Stop();
+
+            canvasAnimator.Play("winPanelFadeIn");
+            this.enabled = false;
         }
     }
 
