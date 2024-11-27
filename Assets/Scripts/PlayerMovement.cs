@@ -1,9 +1,5 @@
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
-using UnityEngine.XR;
+using FMODUnity;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -29,20 +25,37 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private float speedFOV;
 
+    [SerializeField] private float airDrag;
+    [SerializeField] private float groundedDrag;
+
+    [Header("Event References")]
+    [SerializeField] private EventReference shotgunSound;
+    [SerializeField] private EventReference landSound;
+    [SerializeField] private EventReference landTooHardSound;
+    [SerializeField] private EventReference reloadSound;
+    [SerializeField] private EventReference bulletHit;
+
+    private StudioEventEmitter ambientEmitter;
+
     [SerializeField]
+
     private LayerMask groundMask;
+    private StudioEventEmitter eventEmitter;
 
     private bool isCharging;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        eventEmitter = GetComponent<StudioEventEmitter>();
     }
 
     private void Start()
     {
         material = viewmodelRenderer.materials[2];
         cam = Camera.main;
+
+        ambientEmitter = GameObject.Find("Ambience").GetComponent<StudioEventEmitter>();
     }
     private void Update()
     {
@@ -102,6 +115,9 @@ public class PlayerMovement : MonoBehaviour
             // Debug.Log(charge);
             // Debug.Log($"Charge and recoil: {charge * recoil}");
             charge = 0;
+
+            eventEmitter.EventReference = shotgunSound;
+            eventEmitter.Play();
         }
     }
 
@@ -115,16 +131,35 @@ public class PlayerMovement : MonoBehaviour
     {
         RaycastHit hit;
         Physics.Raycast(groundCheck.position, Vector3.down, out hit, 1000f, groundMask);
+        bool previousGround = grounded;
 
         if (hit.distance < 0.1f)
             grounded = true;
         else
             grounded = false;
 
-
-        if (grounded && shootTime == 0)
+        if (grounded)
         {
-            shotCount = 2;
+            rb.drag = groundedDrag;
+
+            if (shootTime == 0)
+                shotCount = 2;
+        }
+        else
+        {
+            rb.drag = airDrag;
+        }
+        if (!previousGround && grounded)
+        {
+            if (rb.velocity.magnitude < 20)
+            {
+                eventEmitter.EventReference = landSound;
+            }
+            else
+            {
+                eventEmitter.EventReference = landTooHardSound;
+            }
+            eventEmitter.Play();
         }
     }
 
@@ -143,4 +178,12 @@ public class PlayerMovement : MonoBehaviour
         return Camera.main.transform.forward;
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("WinTrigger"))
+        {
+            Debug.Log("Hestsaus");
+            ambientEmitter.Stop();
+        }
+    }
 }
